@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Data Membership Check</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        p {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Student Membership Check (List vs DFS)</h2>
+
+    <input type="number" id="searchValue" placeholder="Enter roll number to search">
+    <br>
+    <button onclick="compare()">Compare</button>
+
+    <h3>Results</h3>
+    <p id="listResult"></p>
+    <p id="dfsResult"></p>
+</div>
+
+<script>
+// Predefined student dataset (roll numbers)
+var students = [101, 102, 103, 104, 105, 106, 107, 108, 109, 110];
+
+function dfs(arr, target) {
+    // Simple DFS: recursive search
+    function helper(index) {
+        if (index >= arr.length) return false;
+        if (arr[index] === target) return true;
+        return helper(index + 1);
+    }
+    return helper(0);
+}
+
+function compare() {
+    var target = Number(document.getElementById("searchValue").value);
+    var iterations = 1000;
+
+    // 1. List search timing
+    var startList = performance.now();
+    var foundInList = false;
+    for (let i = 0; i < iterations; i++) {
+        foundInList = students.includes(target);
+    }
+    var endList = performance.now();
+    var listTime = endList - startList;
+
+    // 2. DFS search timing
+    var startDfs = performance.now();
+    var foundInDfs = false;
+    for (let i = 0; i < iterations; i++) {
+        foundInDfs = dfs(students, target);
+    }
+    var endDfs = performance.now();
+    var dfsTime = endDfs - startDfs;
+
+    // 3. Results
+    document.getElementById("listResult").innerHTML =
+        "List Search Time: " + listTime.toFixed(4) +
+        " ms | Complexity: O(n) | Status: " + (foundInList ? "Found" : "Not Found");
+
+    document.getElementById("dfsResult").innerHTML =
+        "DFS Search Time: " + dfsTime.toFixed(4) +
+        " ms | Complexity: O(n) | Status: " + (foundInDfs ? "Found" : "Not Found");
+}
+</script>
+
+</body>
+</html>
