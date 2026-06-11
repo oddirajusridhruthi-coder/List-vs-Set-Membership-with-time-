@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student Data Membership Check</title>
+    <title>Student Membership Check</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,7 +11,7 @@
         }
 
         .container {
-            width: 500px;
+            width: 600px;
             margin: auto;
             background: white;
             padding: 20px;
@@ -37,7 +37,7 @@
 <body>
 
 <div class="container">
-    <h2>Student Membership Check (List vs DFS)</h2>
+    <h2>Student Membership Check (List vs Set vs DFS)</h2>
 
     <input type="number" id="searchValue" placeholder="Enter roll number to search">
     <br>
@@ -45,53 +45,91 @@
 
     <h3>Results</h3>
     <p id="listResult"></p>
+    <p id="setResult"></p>
     <p id="dfsResult"></p>
 </div>
 
 <script>
-// Predefined student dataset (roll numbers)
-var students = [101, 102, 103, 104, 105, 106, 107, 108, 109, 110];
+// Student roll numbers
+var students = [101,102,103,104,105,106,107,108,109,110];
 
+// Set membership
+var studentSet = new Set(students);
+
+// Recursive DFS search
 function dfs(arr, target) {
-    // Simple DFS: recursive search
     function helper(index) {
-        if (index >= arr.length) return false;
-        if (arr[index] === target) return true;
+        if (index >= arr.length)
+            return false;
+
+        if (arr[index] === target)
+            return true;
+
         return helper(index + 1);
     }
+
     return helper(0);
 }
 
 function compare() {
+
     var target = Number(document.getElementById("searchValue").value);
     var iterations = 1000;
 
-    // 1. List search timing
+    // List Membership (includes)
     var startList = performance.now();
-    var foundInList = false;
-    for (let i = 0; i < iterations; i++) {
-        foundInList = students.includes(target);
+    var foundList = false;
+
+    for (var i = 0; i < iterations; i++) {
+        foundList = students.includes(target);
     }
+
     var endList = performance.now();
     var listTime = endList - startList;
 
-    // 2. DFS search timing
-    var startDfs = performance.now();
-    var foundInDfs = false;
-    for (let i = 0; i < iterations; i++) {
-        foundInDfs = dfs(students, target);
-    }
-    var endDfs = performance.now();
-    var dfsTime = endDfs - startDfs;
 
-    // 3. Results
+    // Set Membership (has)
+    var startSet = performance.now();
+    var foundSet = false;
+
+    for (var i = 0; i < iterations; i++) {
+        foundSet = studentSet.has(target);
+    }
+
+    var endSet = performance.now();
+    var setTime = endSet - startSet;
+
+
+    // DFS Search
+    var startDFS = performance.now();
+    var foundDFS = false;
+
+    for (var i = 0; i < iterations; i++) {
+        foundDFS = dfs(students, target);
+    }
+
+    var endDFS = performance.now();
+    var dfsTime = endDFS - startDFS;
+
+
+    // Display Results
     document.getElementById("listResult").innerHTML =
-        "List Search Time: " + listTime.toFixed(4) +
-        " ms | Complexity: O(n) | Status: " + (foundInList ? "Found" : "Not Found");
+        "List Membership (includes): " +
+        listTime.toFixed(4) +
+        " ms | Complexity: O(n) | Status: " +
+        (foundList ? "Found" : "Not Found");
+
+    document.getElementById("setResult").innerHTML =
+        "Set Membership (has): " +
+        setTime.toFixed(4) +
+        " ms | Complexity: O(1) | Status: " +
+        (foundSet ? "Found" : "Not Found");
 
     document.getElementById("dfsResult").innerHTML =
-        "DFS Search Time: " + dfsTime.toFixed(4) +
-        " ms | Complexity: O(n) | Status: " + (foundInDfs ? "Found" : "Not Found");
+        "DFS Search: " +
+        dfsTime.toFixed(4) +
+        " ms | Complexity: O(n) | Status: " +
+        (foundDFS ? "Found" : "Not Found");
 }
 </script>
 
